@@ -1,1 +1,6 @@
-node_modules
+node_modules/
+
+# Django
+.mypy_cache/
+.pytest_cache/
+db.sqlite3
