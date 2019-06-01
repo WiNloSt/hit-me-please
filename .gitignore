@@ -1,4 +1,6 @@
+# Test
 node_modules/
+cypress.env.json
 
 # Django
 .mypy_cache/
