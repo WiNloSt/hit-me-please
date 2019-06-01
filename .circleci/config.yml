@@ -1,0 +1,42 @@
+# Use the latest 2.1 version of CircleCI pipeline processing engine, see https://circleci.com/docs/2.0/configuration-reference/
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - restore_cache:  # ensure this step occurs *before* installing dependencies
+          keys:
+            - pip-packages-{{ .Branch }}-{{ checksum "Pipfile.lock" }}-{{ checksum ".circleci/config.yml" }}
+            - pip-packages-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+            - pip-packages-{{ .Branch }}
+      - run:
+          name: Install pipenv
+          command: |
+            sudo pip install pipenv
+      - run:
+          name: Install dependencies
+          command: |
+            pipenv install
+      - save_cache:
+          key: pip-packages-{{ .Branch }}-{{ checksum "Pipfile.lock" }}-{{ checksum ".circleci/config.yml" }}
+          paths:
+            - ~/.local/share/virtualenvs/
+      - run:
+          name: Run test
+          command: |
+            cd hit_me_please
+            pipenv run python manage.py test
+
+
+
+
+# Orchestrate or schedule a set of jobs, see https://circleci.com/docs/2.0/workflows/
+workflows:
+  # Name the workflow "Welcome"
+  build_and_test:
+    # Run the welcome/run job in its own container
+    jobs:
+      - build
