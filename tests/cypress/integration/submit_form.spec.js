@@ -1,17 +1,42 @@
 describe('Landing page', () => {
-  it('submit form with email', () => {
-    cy.visit('http://localhost:8000/admin')
-    cy.getByLabelText('Username:')
-      .type(Cypress.env('username'))
-      .getByLabelText('Password:')
-      .type(Cypress.env('password'))
+  after(() => {
+    deleteAllHitters()
+  })
 
-    cy.contains('Log in').click()
+  it('save hitters', () => {
+    const email = 'kelvin@prontomarketing.com'
+    cy.visit('http://localhost:8000')
 
-    cy.get('tbody')
-      .contains('Hitters')
-      .click()
+    cy.getByLabelText('Email:').type(email)
+    cy.contains('Submit').click()
 
-    cy.contains('kelvin@prontomarketing.com').should('be.visible')
+    assertEmailIsSaved(email)
   })
 })
+
+function assertEmailIsSaved(email) {
+  login()
+
+  cy.get('tbody')
+    .contains('Hitters')
+    .click()
+  cy.contains(email).should('be.visible')
+}
+
+function login() {
+  cy.visit('http://localhost:8000/admin')
+  cy.getByLabelText('Username:')
+    .type(Cypress.env('username'))
+    .getByLabelText('Password:')
+    .type(Cypress.env('password'))
+  cy.contains('Log in').click()
+}
+
+function deleteAllHitters() {
+  cy.get('#action-toggle').click()
+  cy.get('select[name=action]').select('delete_selected')
+
+  cy.contains('Go').click()
+
+  cy.contains(`Yes, I'm sure`).click()
+}
