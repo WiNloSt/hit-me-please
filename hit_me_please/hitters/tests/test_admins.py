@@ -1,15 +1,8 @@
 from django.contrib import admin
 from django.test import TestCase
 
-from .admin import HitterAdmin
-from .models import Hitter
-
-
-class HitterTest(TestCase):
-    def test_email_field(self):
-        email = 'a@b.com'
-        hitter = Hitter.objects.create(email=email)
-        self.assertEqual(hitter.email, email)
+from ..admin import HitterAdmin
+from ..models import Hitter
 
 
 class HitterAdminTest(TestCase):
