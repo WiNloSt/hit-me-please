@@ -8,7 +8,7 @@ class LandingPageViewTest(TestCase):
         response = self.client.get('')
 
         expected_elements = (
-            '<h1>Hit me!</h1>',
+            '<h1>Hit me please!</h1>',
             '<form action="" method="post">',
             '<input type="hidden" name="csrfmiddlewaretoken"',
             '<input id="email" name="email" type="email" />',
