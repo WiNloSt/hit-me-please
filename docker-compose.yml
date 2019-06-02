@@ -1,6 +1,6 @@
 version: "3.7"
 services:
   app:
-    image: winlost/hitme:v2
+    image: winlost/hitme:live
     ports:
       - 80:8000

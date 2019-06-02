@@ -37,11 +37,30 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: Build image
+          name: Build and push image
           command: |
             docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
             docker build -t winlost/hitme:live .
             docker push winlost/hitme:live
+      - restore_cache:  # ensure this step occurs *before* installing dependencies
+          keys:
+            - pip-packages-{{ .Branch }}-{{ checksum "Pipfile.lock" }}-{{ checksum ".circleci/config.yml" }}
+            - pip-packages-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+            - pip-packages-{{ .Branch }}
+      - run:
+          name: Install deployment dependencies
+          command: |
+            cd ansible
+            pipenv install
+      - save_cache:
+          key: pip-packages-{{ .Branch }}-{{ checksum "Pipfile.lock" }}-{{ checksum ".circleci/config.yml" }}
+          paths:
+            - ~/.local/share/virtualenvs/
+      - run:
+          name: Deploy code
+          command: |
+            cd ansible
+            pipenv run ./deploy.bash
 
 # Orchestrate or schedule a set of jobs, see https://circleci.com/docs/2.0/workflows/
 workflows:
