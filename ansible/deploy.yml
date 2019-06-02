@@ -1,0 +1,4 @@
+- name: Deploy hit me please app
+  hosts: web
+  roles:
+    - deploy

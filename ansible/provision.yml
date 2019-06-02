@@ -1,0 +1,4 @@
+- name: Set up web servers
+  hosts: web
+  roles:
+    - docker

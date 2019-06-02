@@ -1,0 +1,11 @@
+---
+- name: Copy docker-compose file to hosts
+  copy:
+    src: ../docker-compose.yml
+    dest: docker-compose.yml
+
+- name: Pull hit me please docker image
+  command: docker-compose pull
+
+- name: Run app
+  command: docker-compose up -d

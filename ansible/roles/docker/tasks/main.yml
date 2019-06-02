@@ -1,0 +1,16 @@
+---
+- name: Install docker
+  command: bash -c "curl -sS https://get.docker.com/ | sh"
+
+- name: Add current user to docker group
+  become: yes
+  user: name={{ ansible_user_id }}
+        groups=docker
+        append=yes
+
+- name: Install docker compose
+  become: yes
+  get_url:
+    url: https://github.com/docker/compose/releases/download/1.24.0/run.sh
+    dest: /usr/local/bin/docker-compose
+    mode: +x
