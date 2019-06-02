@@ -30,12 +30,25 @@ jobs:
             cd hit_me_please
             pipenv run python manage.py test
 
-
+  deploy:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build image
+          command: |
+            docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+            docker build -t winlost/hitme:live .
+            docker push winlost/hitme:live
 
 # Orchestrate or schedule a set of jobs, see https://circleci.com/docs/2.0/workflows/
 workflows:
-  # Name the workflow "Welcome"
   build_and_test:
     # Run the welcome/run job in its own container
     jobs:
       - build
+      - deploy:
+          requires:
+            - build
