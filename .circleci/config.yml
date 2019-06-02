@@ -9,9 +9,9 @@ jobs:
       - checkout
       - restore_cache:  # ensure this step occurs *before* installing dependencies
           keys:
-            - pip-packages-{{ .Branch }}-{{ checksum "Pipfile.lock" }}-{{ checksum ".circleci/config.yml" }}
-            - pip-packages-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
-            - pip-packages-{{ .Branch }}
+            - build-packages-{{ .Branch }}-{{ checksum "Pipfile.lock" }}-{{ checksum ".circleci/config.yml" }}
+            - build-packages-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+            - build-packages-{{ .Branch }}
       - run:
           name: Install pipenv
           command: |
@@ -21,7 +21,7 @@ jobs:
           command: |
             pipenv install
       - save_cache:
-          key: pip-packages-{{ .Branch }}-{{ checksum "Pipfile.lock" }}-{{ checksum ".circleci/config.yml" }}
+          key: build-packages-{{ .Branch }}-{{ checksum "Pipfile.lock" }}-{{ checksum ".circleci/config.yml" }}
           paths:
             - ~/.local/share/virtualenvs/
       - run:
@@ -44,16 +44,16 @@ jobs:
             docker push winlost/hitme:live
       - restore_cache:  # ensure this step occurs *before* installing dependencies
           keys:
-            - pip-packages-{{ .Branch }}-{{ checksum "Pipfile.lock" }}-{{ checksum ".circleci/config.yml" }}
-            - pip-packages-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
-            - pip-packages-{{ .Branch }}
+            - deploy-packages-{{ .Branch }}-{{ checksum "Pipfile.lock" }}-{{ checksum ".circleci/config.yml" }}
+            - deploy-packages-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+            - deploy-packages-{{ .Branch }}
       - run:
           name: Install deployment dependencies
           command: |
             cd ansible
             pipenv install
       - save_cache:
-          key: pip-packages-{{ .Branch }}-{{ checksum "Pipfile.lock" }}-{{ checksum ".circleci/config.yml" }}
+          key: deploy-packages-{{ .Branch }}-{{ checksum "Pipfile.lock" }}-{{ checksum ".circleci/config.yml" }}
           paths:
             - ~/.local/share/virtualenvs/
       - run:
@@ -65,7 +65,6 @@ jobs:
 # Orchestrate or schedule a set of jobs, see https://circleci.com/docs/2.0/workflows/
 workflows:
   build_and_test:
-    # Run the welcome/run job in its own container
     jobs:
       - build
       - deploy:
